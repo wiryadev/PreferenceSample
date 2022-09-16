@@ -2,6 +2,8 @@ package com.wiryadev.preferencesample
 
 import android.content.Context
 
+private const val PREFS_NAME = "settings"
+
 class SettingPreferences(context: Context) {
 
     private val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -17,7 +19,6 @@ class SettingPreferences(context: Context) {
     }
 
     companion object {
-        private const val PREFS_NAME = "settings"
         private const val THEME_SETTING = "theme_setting"
     }
 }
