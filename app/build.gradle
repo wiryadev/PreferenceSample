@@ -45,6 +45,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
+    // Lifecycle Scope Coroutines
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+
     // Preferences Datastore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 }
