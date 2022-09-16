@@ -3,7 +3,10 @@ package com.wiryadev.preferencesample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.wiryadev.preferencesample.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,24 +19,34 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        settingPrefs = SettingPreferences(this)
+        settingPrefs = SettingPreferences.getInstance(dataStore)
 
         checkDarkModeStatus()
 
         binding.swTheme.setOnCheckedChangeListener { _, isChecked ->
-            settingPrefs.saveThemeSetting(isChecked)
-            checkDarkModeStatus()
+            saveThemeSettings(isChecked)
         }
     }
 
     private fun checkDarkModeStatus() {
-        val isDarkModeActive = settingPrefs.getThemeSetting()
-        if (isDarkModeActive) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            binding.swTheme.isChecked = true
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            binding.swTheme.isChecked = false
+        lifecycleScope.launch {
+            settingPrefs.getThemeSetting()
+                .flowWithLifecycle(lifecycle)
+                .collect { isDarkModeActive ->
+                    if (isDarkModeActive) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        binding.swTheme.isChecked = true
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        binding.swTheme.isChecked = false
+                    }
+                }
+        }
+    }
+
+    private fun saveThemeSettings(isDarkModeActive: Boolean) {
+        lifecycleScope.launch {
+            settingPrefs.saveThemeSetting(isDarkModeActive)
         }
     }
 
