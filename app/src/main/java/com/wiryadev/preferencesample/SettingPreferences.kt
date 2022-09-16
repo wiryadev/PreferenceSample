@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private const val PREFS_NAME = "settings"
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFS_NAME)
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFS_NAME)
 
 class SettingPreferences private constructor(private val dataStore: DataStore<Preferences>) {
 
