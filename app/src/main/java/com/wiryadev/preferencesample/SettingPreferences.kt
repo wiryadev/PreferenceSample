@@ -30,5 +30,18 @@ class SettingPreferences private constructor(private val dataStore: DataStore<Pr
         private const val THEME_SETTING = "theme_setting"
 
         private val THEME_KEY = booleanPreferencesKey(THEME_SETTING)
+
+        @Volatile
+        private var INSTANCE: SettingPreferences? = null
+
+        fun getInstance(dataStore: DataStore<Preferences>): SettingPreferences {
+            if (INSTANCE == null) {
+                synchronized(this) {
+                    INSTANCE = SettingPreferences(dataStore)
+                    INSTANCE
+                }
+            }
+            return INSTANCE as SettingPreferences
+        }
     }
 }
