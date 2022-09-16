@@ -1,23 +1,34 @@
 package com.wiryadev.preferencesample
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class SettingPreferences(context: Context) {
+private const val PREFS_NAME = "settings"
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFS_NAME)
 
-    private val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+class SettingPreferences private constructor(private val dataStore: DataStore<Preferences>) {
 
-    fun saveThemeSetting(isDarkModeActive: Boolean) {
-        val editor = preferences.edit()
-        editor.putBoolean(THEME_SETTING, isDarkModeActive)
-        editor.apply()
+    suspend fun saveThemeSetting(isDarkModeActive: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[THEME_KEY] = isDarkModeActive
+        }
     }
 
-    fun getThemeSetting(): Boolean {
-        return preferences.getBoolean(THEME_SETTING, false)
+    fun getThemeSetting(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[THEME_KEY] ?: false
+        }
     }
 
     companion object {
-        private const val PREFS_NAME = "settings"
         private const val THEME_SETTING = "theme_setting"
+
+        private val THEME_KEY = booleanPreferencesKey(THEME_SETTING)
     }
 }
