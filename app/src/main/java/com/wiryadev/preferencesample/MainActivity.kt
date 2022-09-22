@@ -23,14 +23,14 @@ class MainActivity : AppCompatActivity() {
             this, MainViewModelFactory(settingPrefs)
         )[MainViewModel::class.java]
 
-        checkDarkModeStatus()
+        observeThemeSetting()
 
         binding.swTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveThemeSettings(isChecked)
         }
     }
 
-    private fun checkDarkModeStatus() {
+    private fun observeThemeSetting() {
         viewModel.checkDarkModeStatus().observe(this) { isDarkModeActive ->
             if (isDarkModeActive) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
